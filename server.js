@@ -1,39 +1,17 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
-var http = require("http");
-var server = http.createServer(app);
-const mongoose = require("mongoose");
-var io = require("socket.io")(http);
-
-// console.log(io);
-connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false
-    });
-    console.log("MongoDB connected");
-    io.on("connection", async socket => {
-      try {
-        console.log("user connected");
-      } catch (error) {
-        console.log("not connected");
-      }
-    });
-  } catch (err) {
-    console.error(err.message);
-    process.exit(1);
-  }
-};
-
 const path = require("path");
+const http = require("http");
+const mongoose = require("mongoose");
+const socketServer = require("socket.io");
 
-connectDB();
+const app = express();
 
 app.use(express.json({ extended: false }));
+
+app.get("/chat", async (req, res) => res.send("Hello"));
+app.get("/", async (req, res) => res.send("Hello"));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
@@ -42,6 +20,41 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-server.listen(process.env.PORT, () =>
-  console.log(`Server started on port ${process.env.PORT}`)
+// MONGOOSE CONNECT
+
+connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false
+    });
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+};
+connectDB();
+
+const ser = http.createServer(app);
+const io = socketServer(ser);
+
+ser.listen(process.env.PORT, () =>
+  console.log(`Server started on port: ${process.env.PORT}`)
 );
+
+const connections = [];
+io.on("connection", function(socket) {
+  console.log("Connected to Socket!!" + socket.id);
+  connections.push(socket);
+  socket.on("disconnect", function() {
+    console.log("Disconnected - " + socket.id);
+  });
+
+  socket.on("chat-message", (data) => {
+      
+      io.emit("hohoho", data)
+      });
+
+});
