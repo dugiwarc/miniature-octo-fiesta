@@ -10,8 +10,8 @@ const app = express();
 
 app.use(express.json({ extended: false }));
 
-app.get("/chat", async (req, res) => res.send("Hello"));
-app.get("/", async (req, res) => res.send("Hello"));
+// app.get("/chat", async (req, res) => res.send("Hello"));
+// app.get("/", async (req, res) => res.send("Hello"));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
@@ -52,9 +52,8 @@ io.on("connection", function(socket) {
     console.log("Disconnected - " + socket.id);
   });
 
-  socket.on("chat-message", (data) => {
-      
-      io.emit("hohoho", data)
-      });
-
+  socket.on("chat-message", data => {
+    console.log("HOHOHO");
+    io.emit("hohoho", data);
+  });
 });

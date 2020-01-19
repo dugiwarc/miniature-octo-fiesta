@@ -5,11 +5,11 @@ import Chat from "./chat/Chat";
 import "./App.css";
 
 const App = () => {
-  console.log("REFRESH")
+  console.log("REFRESH");
   return (
     <Fragment>
-      <Route exact path="/" />
       <Switch>
+        <Route exact path="/" component={Chat} />
         <Route exact path="/chat" component={Chat} />
       </Switch>
     </Fragment>

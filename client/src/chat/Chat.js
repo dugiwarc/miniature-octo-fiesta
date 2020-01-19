@@ -7,7 +7,6 @@ let socket = io.connect("http://localhost:5000");
 
 const Chat = ({ sendMessage, chats }) => {
   useEffect(() => {
-
     socket.on("hohoho", function(data) {
       console.log("RECEIVED", data);
     });
@@ -19,12 +18,21 @@ const Chat = ({ sendMessage, chats }) => {
 
   return (
     <div>
-      Chat
-      
-      <button onClick={() => sendMessage({conversation_id:"1xaa", from:"George", to:"Anna", text:"Hey babe"})} />
-        {chats.map(chat => (
-            <h1 key={chat.text}>{chat.to}</h1>
-        ))}
+      <h1>Chat</h1>
+
+      <button
+        onClick={() =>
+          sendMessage({
+            conversation_id: "1xaa",
+            from: "George",
+            to: "Anna",
+            text: "Hey babe"
+          })
+        }
+      />
+      {chats.map(chat => (
+        <h1 key={chat.text}>{chat.to}</h1>
+      ))}
     </div>
   );
 };
@@ -34,13 +42,8 @@ Chat.propTypes = {
   chats: PropTypes.array.isRequired
 };
 
-
-
 const mapStateToProps = state => ({
-    chats: state.alert
-})
+  chats: state.alert
+});
 
-export default connect(
-  mapStateToProps,
-  { sendMessage }
-)(Chat);
+export default connect(mapStateToProps, { sendMessage })(Chat);
